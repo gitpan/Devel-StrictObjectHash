@@ -3,12 +3,12 @@
 use strict;
 use warnings;
 
-use Test::More 'no_plan';
+use Test::More tests => 44;
 
 BEGIN { 
     unshift @INC => qw(test_lib t/test_lib);
     use_ok('Devel::StrictObjectHash', (
-                            strict_bless => [ qw(TestBase TestDerived) ]
+                            strict_bless => qr/Test.*?/, 
                             ));
 }
 
@@ -36,24 +36,44 @@ isa_ok($test_derived, 'TestBase');
 eval {
     $test_derived->{protected} = "Fail";
 };
-like($@, qr/Illegal Operation/, '... this should thrown an exception for accessing protected outside the object');
+if ($@) {
+    like($@, qr/Illegal Operation/, 
+         '... this should thrown an exception for accessing protected outside the object');
+} else {
+    fail('... this should throw an exception');
+}
 
 eval {
     $test_derived->{_private} = "Fail";
 };
-like($@, qr/Illegal Operation/, '... this should thrown an exception for accessing private outside the object');
+if ($@) {
+    like($@, qr/Illegal Operation/, 
+         '... this should thrown an exception for accessing private outside the object');
+} else {
+    fail('... this should throw an exception');
+}
 
 eval {
     $test_derived->{_derived_private} = "Fail";
 };
-like($@, qr/Illegal Operation/, '... this should thrown an exception for accessing derived private outside the object');
+if ($@) {
+    like($@, qr/Illegal Operation/, 
+         '... this should thrown an exception for accessing derived private outside the object')
+} else {
+    fail('... this should throw an exception');
+}
 
 # test illegal accessing the private from TestBase 
 
 eval {
     $test_derived->getPrivateFromBase()
 };
-like($@, qr/Illegal Operation/, '... this should thrown an exception for attempting to access private from TestBase');
+if ($@) {
+    like($@, qr/Illegal Operation/, 
+         '... this should thrown an exception for attempting to access private from TestBase')
+} else {
+    fail('... this should throw an exception');
+}
 
 # NOTE:
 # when running this test with debug on, lives_ok messes with the

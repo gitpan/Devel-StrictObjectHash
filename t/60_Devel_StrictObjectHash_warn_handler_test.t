@@ -8,8 +8,8 @@ use Test::More tests => 1;
 BEGIN { 
     unshift @INC => qw(test_lib t/test_lib);
     use_ok('Devel::StrictObjectHash', (
-                        strict_bless => [ qw(TestClash TestInitializerClash) ], 
-                        allow_autovivification_in => qr/_init/
+                        strict_bless => [ qw(TestBase) ], 
+                        error_handling => "warn"
                         ));
 }
 
@@ -21,10 +21,4 @@ BEGIN {
 
 # plan for this test:
 # -----------------------------------------------------------------------------
-# I want to create a TestClash module which will inherit TestBase and 
-# then create a private name clash. Devel::StrictObjectHash should detect it 
-# and report it to us.
-# 
-# I want to create TestInitializerClash which will inherit from TestInitializer
-# and create a private field clash but TestInitializerClash will create the 
-# field first and so TestInitializer will then try to overwrite it.
+# Test for warnings instead of it die-ing
